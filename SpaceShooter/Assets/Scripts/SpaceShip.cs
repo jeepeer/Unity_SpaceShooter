@@ -72,7 +72,6 @@ public class SpaceShip : MonoBehaviour
         Bullet newBullet = Instantiate(bullet, mypos, Quaternion.identity);
         newBullet.HandleBulletDirection((int)Bullet.BulletDirection.up);
 
-
         // add bullet to array, 
         // bullet array moves the bullets ?
     }
