@@ -5,16 +5,21 @@ using UnityEngine;
 
 public class SpaceShip : MonoBehaviour
 {
-
-    public float speed;
-   
-
+    [SerializeField] private Bullet bullet;
+    [SerializeField] private float speed;
+    
+    float timeToReload = 0.1f;
+    float reloadTimer;
+    
     void Start()
     {
+        reloadTimer = timeToReload;
     }
 
     void Update()
     {
+        reloadTimer -= Time.deltaTime;
+
         HandleMovement();
         HandleShooting();
     }
@@ -51,13 +56,23 @@ public class SpaceShip : MonoBehaviour
 
     void HandleShooting()
     {
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKey(KeyCode.L))
         {
-            Shoot();
+            if(reloadTimer <= 0f)
+            {
+                Shoot();
+                reloadTimer = timeToReload;
+            }
         }
     }
+
     void Shoot()
     {
+        Vector3 mypos = transform.position;
+        Bullet newBullet = Instantiate(bullet, mypos, Quaternion.identity);
+        newBullet.HandleBulletDirection((int)Bullet.BulletDirection.up);
+
+
         // add bullet to array, 
         // bullet array moves the bullets ?
     }
