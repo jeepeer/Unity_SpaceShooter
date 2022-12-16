@@ -3,19 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Transforms;
-
+using Unity.Mathematics;
 public class MovementSystem : ComponentSystem
-{ 
+{
+    float3 enemyPosition;
+    Entity enemyEntity;
+
+    float3 bulletPosition;
+    Entity bulletEntity;
     protected override void OnUpdate()
     {
-        Entities.ForEach((ref Translation trans, ref COMPONENT p) =>
+        Entities.WithAll<EnemyComponentTag>().ForEach((Entity enemy, ref Translation translation) =>
         {
-            trans.Value.x += p.Value * Time.DeltaTime;
+            translation.Value.x -= 2 * Time.DeltaTime;
+            enemyPosition = translation.Value;
+            enemyEntity = enemy;
+
+            if (math.distance(bulletPosition, enemyPosition) <= 1)
+            {
+                PostUpdateCommands.DestroyEntity(bulletEntity);
+                PostUpdateCommands.DestroyEntity(enemyEntity);
+            }
         });
 
-        Entities.ForEach((ref Translation trans, ref EEEEEEE p) =>
+        Entities.WithAll<BulletComponentTag>().ForEach((Entity bullet, ref Translation translation) =>
         {
-            trans.Value.x -= p.Value * Time.DeltaTime;
+            translation.Value.x += 1 * Time.DeltaTime;
+            bulletPosition = translation.Value;
+            bulletEntity = bullet;
+
+            if (math.distance(bulletPosition, enemyPosition) <= 1)
+            {
+                PostUpdateCommands.DestroyEntity(enemyEntity);
+                PostUpdateCommands.DestroyEntity(bulletEntity);
+            }
         });
+
+
     }
 }

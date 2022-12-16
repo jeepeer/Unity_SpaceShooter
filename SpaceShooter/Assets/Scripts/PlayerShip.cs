@@ -1,19 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Transforms;
-using Unity.Mathematics;
 
 public class PlayerShip : MonoBehaviour
 {
     private float speed = 10f;
     private float timer;
-    private float reloadTime = 0.2f;
+    private float reloadTime = 0.5f;
 
-    public GameObject gameObject;
+    [SerializeField] private GameObject lazerPrefab;
 
-    private Entity entity;
+    private Entity lazerEntity;
     private EntityManager entityManager;
     private BlobAssetStore blobAssetStore;
 
@@ -22,7 +19,7 @@ public class PlayerShip : MonoBehaviour
         entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         blobAssetStore = new BlobAssetStore();
         GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blobAssetStore);
-        entity = GameObjectConversionUtility.ConvertGameObjectHierarchy(gameObject, settings);
+        lazerEntity = GameObjectConversionUtility.ConvertGameObjectHierarchy(lazerPrefab, settings);
 
         timer = reloadTime;
     }
@@ -49,10 +46,8 @@ public class PlayerShip : MonoBehaviour
         timer -= Time.deltaTime;
         if (timer <= 0f)
         {
-            var newLazer = entityManager.Instantiate(entity);
+            var newLazer = entityManager.Instantiate(lazerEntity);
             entityManager.SetComponentData(newLazer, new Translation { Value = transform.position });
-
-            //entityManager.AddComponentData(newLazer, new COMPONENT { Value = -1});
 
             timer = reloadTime;
         }

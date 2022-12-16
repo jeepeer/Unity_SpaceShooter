@@ -1,16 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 
-public class EntitySpawner : ComponentSystem
+public class EntitySpawnSystem : ComponentSystem
 {
     private float timer;
-    float3 spawnPosition;
-    float xPos;
-    int maxEntities = 100;
+    private float3 spawnPosition;
+    private float xPos;
+
+    public bool test;
 
     protected override void OnStartRunning()
     {
@@ -27,17 +26,15 @@ public class EntitySpawner : ComponentSystem
             Entities.ForEach((ref EntityManagerComponent entityManagerComponent) =>
             {
                 // instantiating entity prefab
-                var entityReference = EntityManager.Instantiate(entityManagerComponent.entity);
+                var entityReference = EntityManager.Instantiate(entityManagerComponent.entityPrefab);
 
                 // set random y position for entity
                 float randomYPos = (UnityEngine.Random.Range(-Screen.height, Screen.height)) / 100;
                 spawnPosition = new float3(xPos, randomYPos, 0);
                 EntityManager.SetComponentData(entityReference, new Translation { Value = spawnPosition });
 
-                //EntityManager.AddComponentData(entityReference, new EEEEEEE { Value = 1 });
-
                 // reset timer
-                timer = 0.5f;
+                timer = 0.1f;
             });
         }
     }
